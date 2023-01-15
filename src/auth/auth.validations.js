@@ -1,8 +1,6 @@
 const Joi = require("joi");
 
-const registerSchema = Joi.object({
-  username: Joi.string().alphanum().min(3).max(30).required(),
-
+const loginSchema = Joi.object({
   email: Joi.string()
     .email({
       minDomainSegments: 2,
@@ -11,20 +9,28 @@ const registerSchema = Joi.object({
     .required(),
 
   password: Joi.string().pattern(new RegExp("^[a-zA-Z0-9]{8,30}$")).required(),
+});
 
-  repeat_password: Joi.ref("password"),
-}).with("password", "repeat_password");
+// const registerSchema = Joi.object({
+//   username: Joi.string().alphanum().min(3).max(30).required(),
 
-// (async () => {
-//   try {
-//     const value = await registerSchema.validateAsync({
-//       username: "abc",
-//       email: "testuser10@gmail.com",
-//     });
-//     console.log(value);
-//   } catch (err) {
-//     console.log(err);
-//   }
-// })();
+//   email: Joi.string()
+//     .email({
+//       minDomainSegments: 2,
+//       tlds: { allow: ["com", "net"] },
+//     })
+//     .required(),
 
-module.exports = { registerSchema };
+//   password: Joi.string().pattern(new RegExp("^[a-zA-Z0-9]{8,30}$")).required(),
+
+//   repeat_password: Joi.ref("password"),
+// }).with("password", "repeat_password");
+
+const registerSchema = loginSchema
+  .append({
+    username: Joi.string().alphanum().min(3).max(30).required(),
+    repeat_password: Joi.ref("password"),
+  })
+  .with("password", "repeat_password");
+
+module.exports = { registerSchema, loginSchema };
